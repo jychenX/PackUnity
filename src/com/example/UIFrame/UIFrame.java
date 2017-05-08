@@ -24,17 +24,18 @@ import com.example.Function.ShareSDKUnityCallback;
  */
 public class UIFrame implements ActionListener, FocusListener  {
 
-	public static JTextField packtf;
+	private JTextField packtf;
 	public static JFrame fm;
+	public static JTextField tfJdk;
 	public static JTextField tfSdk;
 	
-	public void initFrame(String isValidPath){
+	public void initFrame(int isValidPath){
 		fm=new JFrame("ShareSDK辅助工具");
 		fm.setLayout(new FlowLayout());
 		JPanel pn=new JPanel();
 		pn.setLayout(new FlowLayout(10,0,0));
 		
-		JLabel packName=new JLabel("项目包名: ");
+		JLabel packName=new JLabel("项目包名 :");
 		packName.setFont(new Font("宋体", 0, 16));
 
 		packtf=new JTextField(40);
@@ -42,23 +43,32 @@ public class UIFrame implements ActionListener, FocusListener  {
 		packtf.setText("cn.sharesdk.demo");
 		packtf.setForeground(Color.BLACK);
 		
+		
 		pn.add(packName);
 		pn.add(packtf);
 		fm.add(pn);
-
+		
+		JPanel jdkPath=new JPanel();
+		jdkPath.setLayout(new FlowLayout(10,0,2));
+		tfJdk = new  JTextField(50);
+		tfJdk.setFont(new Font("宋体", 0, 16));
+		tfJdk.setForeground(Color.BLACK);
+		tfJdk.setText("请输入JDK路径");
+		tfJdk.addFocusListener(this);
+		jdkPath.add(tfJdk);
+		fm.add(jdkPath);
+		
 		JPanel sdkPath=new JPanel();
-		sdkPath.setLayout(new FlowLayout(10,0,0));
+		sdkPath.setLayout(new FlowLayout(10,0,2));
 		tfSdk = new  JTextField(50);
 		tfSdk.setFont(new Font("宋体", 0, 16));
 		tfSdk.setForeground(Color.BLACK);
 		tfSdk.setText("请输入AndroidSDK路径");
+		tfSdk.setActionCommand("SDKPath");
+		tfSdk.addFocusListener(this);
+		jdkPath.add(tfSdk);
+		fm.add(tfSdk);
 
-		if(isValidPath.equals("")){
-			sdkPath.add(tfSdk);
-			fm.add(sdkPath);
-			tfSdk.addFocusListener(this);
-		}
-		
 		JPanel pnSure=new JPanel();
 		pnSure.setLayout(new FlowLayout(20,110,10));
 		
@@ -94,8 +104,11 @@ public class UIFrame implements ActionListener, FocusListener  {
 		ShareSDKANECallback ane =new ShareSDKANECallback();
 		try {
 			if("UnityOK".equals(e.getActionCommand())){
+				//复制以及修改文件
+				unity.UnityFileCatalog(packtf.getText());
 				//编译类文件以及打包成jar
 				unity.UnityJAR(packtf.getText());
+				
 			}else if("ANEOK".equals(e.getActionCommand())){
 				ane.openBat("c");
 			}
@@ -103,20 +116,23 @@ public class UIFrame implements ActionListener, FocusListener  {
 		} catch (Throwable t) {       //异常信息捕获
 			t.printStackTrace();
 			 if(t.toString().equals("java.lang.NullPointerException")){
-				 JOptionPane.showMessageDialog(fm, "请检查电脑JDK或者SDK的环境变量，或者键入路径");
+				 JOptionPane.showMessageDialog(fm, "请检查电脑JDK的JAVA_HOME环境变量");
 			 }
+			 JOptionPane.showMessageDialog(fm, "异常信息："+t.toString());
 		}
+
 	}
 
+	@Override
 	public void focusGained(FocusEvent e) {
-		if(tfSdk == e.getSource()){
-			tfSdk.setText("");
-		}
+//		if("ANEOK".equals(e.getID()))
+//		tfJdk.setText("");
+//		tfSdk.setText("");
 	}
 
-	public void focusLost(FocusEvent e) {
-		if(tfSdk == e.getSource() && tfSdk.getText().equals("")){
-			tfSdk.setText("请输入AndroidSDK路径");
-		}
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

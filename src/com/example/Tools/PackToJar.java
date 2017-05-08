@@ -10,7 +10,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import com.example.UIFrame.Main;
 
 
 public class PackToJar {
@@ -37,34 +36,20 @@ public class PackToJar {
 	    target.close();
 	  }
 	
-	private static void writeClassFile(File file, JarOutputStream target, String javaPath) throws IOException {
+	private static void writeClassFile(File source, JarOutputStream target, String javaPath) throws IOException {
 		BufferedInputStream in = null;
-		if(!file.exists()){
-			file.mkdirs();
-		}
 	    try {
-	    	if (file.isDirectory()) {
-	    		String name = file.getPath().replace("\\", "/");
-	    		if (!name.isEmpty() && !name.equals(Main.getMainClassPath().replace("\\", "/")+"classFile")) {
-	    			if (!name.endsWith("/")) {
-	    				name += "/";
-	    			}
-	    			name = name.substring(javaPath.length()+1);
-	    			JarEntry entry = new JarEntry(name);
-	    			entry.setTime(file.lastModified());
-	    			target.putNextEntry(entry);
-	    			target.closeEntry();
-	    		}
-	    		for (File nestedFile : file.listFiles()){
+	    	if (source.isDirectory()) {
+	    		for (File nestedFile : source.listFiles()){
 	    			writeClassFile(nestedFile, target, javaPath);
 	    		}
 	    		return;
 	    	}
-	      String middleName = file.getPath().replace("\\", "/").substring(javaPath.length()+1);
+	      String middleName = source.getPath().replace("\\", "/").substring(javaPath.length());
 	      JarEntry entry = new JarEntry(middleName);
-	      entry.setTime(file.lastModified());
+	      entry.setTime(source.lastModified());
 	      target.putNextEntry(entry);
-	      in = new BufferedInputStream(new FileInputStream(file));
+	      in = new BufferedInputStream(new FileInputStream(source));
 
 	      byte[] buffer = new byte[1024];
 	      while (true) {
