@@ -6,11 +6,6 @@ import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.example.Tools.FileUtile;
-import com.example.Tools.SeachSystemJAR;
-
-
-
 public class Main{
 
 	public static void main(String[] args) {
@@ -30,22 +25,19 @@ public class Main{
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		System.out.println(path+File.separator);
 		return path+File.separator;
 	}
 	
-	public static int initTools(){
-		int i = 0;
+	public static String initTools(){
+		String path = "";
 		Map<String, String> map = System.getenv();
 		for(Iterator<String> it = map.keySet().iterator();it.hasNext();){
 			String key =it.next();
-
-			if(key.equals("JAVA_HOME")){
-				i++;
-			}else if(key.equals("ANDROID_HOME")){
-				i++;
+			System.out.println(key+" ： "+map.get(key));
+			if(key.equals("ANDROID_HOME")){
+				path = map.get(key).toString();
 			}
 		}
-		return i;
+		return path;
 	}
 }
